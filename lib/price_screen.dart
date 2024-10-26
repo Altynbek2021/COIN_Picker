@@ -16,6 +16,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = "USD";
   String rateState = '';
+  bool isLoaded = true;
 
   DropdownButton<String> getDropDownBtn() {
     return DropdownButton(
@@ -63,34 +64,46 @@ class _PriceScreenState extends State<PriceScreen> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: InkWell(
-                  onTap: () async {
-                    NetworkHelper jgs = NetworkHelper();
-                    String rate = await jgs.getData();
-                    print("rate == $rate");
-                    setState(() {
-                      rateState = rate;
-                    });
-                  },
-                  child: Text(
-                    '1 BTC =  $rateState USD',
-                    textAlign: TextAlign.center,
+            child: isLoaded
+                ? Card(
+                    color: Colors.lightBlueAccent,
+                    elevation: 5.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 28.0),
+                      child: InkWell(
+                        onTap: () async {
+                          setState(() {
+                            isLoaded = false;
+                          });
+                          NetworkHelper jgs = NetworkHelper();
+                          String rate = await jgs.getData();
+                          print("rate == $rate");
+                          setState(() {
+                            rateState = rate;
+                            isLoaded = true;
+                          });
+                        },
+                        child: Text(
+                          '1 BTC =  $rateState USD',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : Text(
+                    "Loading...",
                     style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
+                      color: Colors.red,
                     ),
                   ),
-                ),
-              ),
-            ),
           ),
           Container(
               height: 150.0,
