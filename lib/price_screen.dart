@@ -4,8 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
-import 'package:http/http.dart';
-
 class PriceScreen extends StatefulWidget {
   const PriceScreen({super.key});
 
@@ -30,11 +28,13 @@ class _PriceScreenState extends State<PriceScreen> {
             ),
           );
         }).toList(),
-        onChanged: (val) {
-          setState(() {
-            NetworkHelper();
-            selectedCurrency = val!;
-          });
+        onChanged: (val) async {
+          NetworkHelper jgs = NetworkHelper();
+          String rate = await jgs.getData(val!);
+          selectedCurrency = val;
+          rateState = rate;
+
+          // setState(() {});
         });
   }
 
@@ -63,48 +63,29 @@ class _PriceScreenState extends State<PriceScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: isLoaded
-                ? Card(
-                    color: Colors.lightBlueAccent,
-                    elevation: 5.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 15.0, horizontal: 28.0),
-                      child: InkWell(
-                        onTap: () async {
-                          setState(() {
-                            isLoaded = false;
-                          });
-                          NetworkHelper jgs = NetworkHelper();
-                          String rate = await jgs.getData();
-                          print("rate == $rate");
-                          setState(() {
-                            rateState = rate;
-                            isLoaded = true;
-                          });
-                        },
-                        child: Text(
-                          '1 BTC =  $rateState USD',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.white,
-                          ),
-                        ),
+              padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+              child: Card(
+                color: Colors.lightBlueAccent,
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                  child: InkWell(
+                    onTap: () async {},
+                    child: Text(
+                      '1 BTC =  $rateState $selectedCurrency',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
                       ),
                     ),
-                  )
-                : Text(
-                    "Loading...",
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
                   ),
-          ),
+                ),
+              )),
           Container(
               height: 150.0,
               alignment: Alignment.center,

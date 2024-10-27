@@ -5,16 +5,16 @@ const url =
     "https://rest.coinapi.io/v1/exchangerate/BTC/USD?apikey=8E8FC6C1-91E7-4AEA-B5B1-A626E32D594E";
 /////BTC/USD?apikey=
 ///
-const URL = "https://rest.coinapi.io/v1/exchangerate/";
+const URL = "https://rest.coinapi.io/v1/exchangerate/BTC/";
 
 ///
-const API = "8E8FC6C1-91E7-4AEA-B5B1-A626E32D594E";
+const APIKEY = "8E8FC6C1-91E7-4AEA-B5B1-A626E32D594E";
 
 class NetworkHelper {
   NetworkHelper();
 
-  Future getData() async {
-    var response = await get(Uri.parse(url));
+  Future getData(String currency) async {
+    var response = await get(Uri.parse("$URL$currency?apikey=$APIKEY"));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
